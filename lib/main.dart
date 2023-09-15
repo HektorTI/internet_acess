@@ -93,7 +93,7 @@ class _PrevisaoDoTempoState extends State<PrevisaoDoTempo> {
                       style: const TextStyle(fontSize: 20),
                     ),
                     Text(
-                      'Umidade: $umidade%',
+                      'Umidade tempo: $umidade%',
                       style: const TextStyle(fontSize: 20),
                     ),
                   ],

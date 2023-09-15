@@ -14,42 +14,44 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Previsão do Tempo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.deepPurple,
       ),
-      home: const WeatherScreen(),
+      home: const PrevisaoDoTempo(),
     );
   }
 }
 
-class WeatherScreen extends StatefulWidget {
-  const WeatherScreen({Key? key}) : super(key: key); // Adicione o parâmetro key
+class PrevisaoDoTempo extends StatefulWidget {
+  const PrevisaoDoTempo({Key? key}) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _WeatherScreenState createState() => _WeatherScreenState();
+  _PrevisaoDoTempoState createState() => _PrevisaoDoTempoState();
 }
 
-class _WeatherScreenState extends State<WeatherScreen> {
-  String apiKey =
-      '183bc01e95d9553494b168b73fa9d9ba'; // Substitua pela sua chave de API
-  String city = 'Sao Paulo'; // Substitua pela sua cidade
+class _PrevisaoDoTempoState extends State<PrevisaoDoTempo> {
+  String apiKey = 'd62cac6d7fe423e36b7c0960418f5cc3'; //  chave de API
+  String city = 'Sao Paulo'; // cidade
   String apiUrl =
-      'https://api.openweathermap.org/data/2.5/weather?q=Sao%20Paulo,BR&appid=183bc01e95d9553494b168b73fa9d9ba';
+      'https://api.openweathermap.org/data/2.5/weather?q=Sao%20Paulo,BR&appid=d62cac6d7fe423e36b7c0960418f5cc3&units=metric';
 
-  Map<String, dynamic> weatherData = {};
+  Map<String, dynamic> previsaoDotempo = {};
+
+  int umidade = 0;
 
   @override
   void initState() {
     super.initState();
-    fetchWeatherData();
+    buscarDadosOpenWeather();
   }
 
-  Future<void> fetchWeatherData() async {
+  Future<void> buscarDadosOpenWeather() async {
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
       setState(() {
-        weatherData = data;
+        previsaoDotempo = data;
+        umidade = previsaoDotempo['main']['humidity']; // Armazena a umidade
       });
     } else {
       throw Exception('Falha ao carregar dados meteorológicos');
@@ -59,38 +61,50 @@ class _WeatherScreenState extends State<WeatherScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.amber,
-
       appBar: AppBar(
         title: const Text('Previsão do Tempo'),
+        backgroundColor: const Color.fromARGB(255, 122, 120, 112),
       ),
-      body: Center(
-        child: weatherData.isEmpty
-            ? const CircularProgressIndicator()
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  _getWeatherIcon(),
-                  Text(
-                    'Cidade: ${weatherData['name']}',
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  Text(
-                    'Temperatura: ${weatherData['main']['temp']}°C',
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  Text(
-                    'Condição: ${weatherData['weather'][0]['description']}',
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                ],
-              ),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Colors.blue, Colors.red],
+          ),
+        ),
+        child: Center(
+          child: previsaoDotempo.isEmpty
+              ? const CircularProgressIndicator()
+              : Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    _climaIcones(),
+                    Text(
+                      'Cidade: ${previsaoDotempo['name']}',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      'Temperatura: ${previsaoDotempo['main']['temp']}°C',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      'Condição: ${previsaoDotempo['weather'][0]['description']}',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    Text(
+                      'Umidade: $umidade%',
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  ],
+                ),
+        ),
       ),
     );
   }
 
-  Widget _getWeatherIcon() {
-    String iconCode = weatherData['weather'][0]['main'];
+  Widget _climaIcones() {
+    String iconCode = previsaoDotempo['weather'][0]['main'];
 
     switch (iconCode) {
       case 'Clear':

@@ -48,3 +48,6 @@ Dentro do método build, que está na classe de estado _PrevisaoDoTempoState, cr
 O método _climaIcones() retorna um widget de ícone com base no código de ícone da condição climática. Ele utiliza um switch para mapear os diferentes códigos de ícone para ícones correspondentes.
 
 O aplicativo Flutter busca a previsão do tempo de uma cidade usando a API OpenWeatherMap e exibe as informações na tela, incluindo um ícone correspondente à condição climática atual.
+
+![Screenshot 2023-09-20 at 01 44 22](https://github.com/HektorTI/internet_acess/assets/142464152/11ebc87b-4279-4739-8df2-27d73d7213a7)
+
